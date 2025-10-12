@@ -30,8 +30,8 @@ public class MainMenuManager : MonoBehaviour
         Debug.Log("Quit Game!"); // En el editor no se cerrará, solo en el build
         Application.Quit();
     }
-    public void StartGame(string Game)
+    public void StartGame(string Tutorial)
 {
-    SceneManager.LoadScene(Game);
+    SceneManager.LoadScene(Tutorial);
 }
 }
