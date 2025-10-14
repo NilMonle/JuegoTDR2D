@@ -1,12 +1,17 @@
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class Player : MonoBehaviour
 {
     public float moveSpeed = 5f;   // Velocidad de movimiento horizontal
     public float jumpForce = 7f;   // Fuerza del salto
+    public float moveInput;
     private Rigidbody2D rb;
+    private float direction;
+    public float Direction => direction;
     private bool isGrounded = false;
-    private bool facingRight = true; //saber hacia donde mira el jugador
+    private bool facingRight = true; //saber hacia donde mira el jugador,
+
+    private PlayerDash _playerDash;
 
     [Header("Animacion")]
     private Animator animator;
@@ -16,9 +21,13 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
+    void Awake()
+    {
+        _playerDash = GetComponent<PlayerDash>();
+    }
     void Update()
     {
-        
+
         // --- Movimiento horizontal con A y D ---
         float moveInput = 0f;
         if (Input.GetKey(KeyCode.A)) moveInput = -1f;
@@ -49,7 +58,21 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("isJumping", !isGrounded); // saltando o en el suelo
         animator.SetBool("isGrounded", isGrounded);
 
+        direction = Input.GetAxisRaw("Horizontal");
+        if (!_playerDash.IsDashing)
+        {
+            moveInput();
+        }
 
+
+    }
+    
+    private void FixedUpdate()
+    {
+        if (!_playerDash.IsDashing)
+        {
+            moveInput();
+        }
     }
 
     // Dibuja el área de detección en el editor
