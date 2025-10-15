@@ -1,106 +1,66 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour
 {
-    public float moveSpeed = 5f;   // Velocidad de movimiento horizontal
-    public float jumpForce = 7f;   // Fuerza del salto
-    public float moveInput;
-    private Rigidbody2D rb;
-    private float direction;
-    public float Direction => direction;
-    private bool isGrounded = false;
-    private bool facingRight = true; //saber hacia donde mira el jugador,
-
+    private Rigidbody2D _rb;
     private PlayerDash _playerDash;
 
-    [Header("Animacion")]
-    private Animator animator;
-    void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-    }
+    [Header("Jump")]
+    [SerializeField] private float _jumpForce = 7f;
+    [SerializeField] private Transform _checkGround;
+    [SerializeField] private float _raycastLength;
+    [SerializeField] private LayerMask _groundLayer;
 
-    void Awake()
+    [Header("Movement")]
+    [SerializeField] private float _speed = 4f;
+    private float direction;
+    public float Direction => direction;
+
+    private bool _isGrounded;
+
+    private void Awake()
     {
+        _rb = GetComponent<Rigidbody2D>();
         _playerDash = GetComponent<PlayerDash>();
     }
-    void Update()
+
+    void Start()
     {
 
-        // --- Movimiento horizontal con A y D ---
-        float moveInput = 0f;
-        if (Input.GetKey(KeyCode.A)) moveInput = -1f;
-        if (Input.GetKey(KeyCode.D)) moveInput = 1f;
+    }
 
-        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
-
-        // --- Salto con espacio ---
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-        {
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-        }
-
-        // --- Flip del sprite ---
-        if (moveInput > 0 && !facingRight)
-        {
-            Flip();
-        }
-        else if (moveInput < 0 && facingRight)
-        {
-            Flip();
-        }
-
-        //Animacion
-        float speed = Mathf.Abs(moveInput);
-        animator.SetFloat("Speed", speed); // correr o idle
-
-        animator.SetBool("isJumping", !isGrounded); // saltando o en el suelo
-        animator.SetBool("isGrounded", isGrounded);
-
+    void Update()
+    {
         direction = Input.GetAxisRaw("Horizontal");
         if (!_playerDash.IsDashing)
         {
-            moveInput();
+            Jump();
         }
-
-
     }
-    
+
     private void FixedUpdate()
     {
         if (!_playerDash.IsDashing)
         {
-            moveInput();
+            Move();
         }
     }
 
-    // Dibuja el área de detección en el editor
-    void Flip()
+    private void Move()
     {
-        facingRight = !facingRight;
-        Vector3 escala = transform.localScale;
-        escala.x *= -1;
-        transform.localScale = escala;
-    }
-        
-    // Detectar si toca el suelo
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("ground"))
-        {
-            isGrounded = true;
-        }
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("ground"))
-        {
-            isGrounded = false;
-        }
+        _rb.linearVelocity = new Vector2(Direction * _speed, _rb.linearVelocity.y);
     }
     
+    private void Jump()
+    {
+        _isGrounded = Physics2D.Raycast(_checkGround.position, Vector2.down, _raycastLength, _groundLayer);
+        print(_isGrounded);
 
-    
+        if (Input.GetButtonDown("Jump") && _isGrounded == true)
+        {
+            _rb.linearVelocity = Vector2.up * _jumpForce;
+        }
+    }
 }
