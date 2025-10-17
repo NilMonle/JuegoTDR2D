@@ -2,14 +2,28 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed = 5f;   // Velocidad de movimiento horizontal
-    public float jumpForce = 7f;   // Fuerza del salto
+    [Header("Movimiento")]
+    public float moveSpeed = 5f;
+    public float jumpForce = 7f;
+
+    [Header("Dash")]
+    public float dashSpeed = 15f;
+    public float dashDuration = 0.2f;
+    public float dashCooldown = 1f;
+    private bool isDashing = false;
+    private bool canDash = true;
+
+    [Header("Doble Salto")]
+    public int maxJumps = 2; // número total de saltos (2 = doble salto)
+    private int jumpCount = 0;
+
     private Rigidbody2D rb;
     private bool isGrounded = false;
-    private bool facingRight = true; //saber hacia donde mira el jugador
+    private bool facingRight = true;
 
-    [Header("Animacion")]
+    [Header("Animación")]
     private Animator animator;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -18,41 +32,41 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        
-        // --- Movimiento horizontal con A y D ---
+        if (isDashing) return;
+
+        // --- Movimiento horizontal ---
         float moveInput = 0f;
         if (Input.GetKey(KeyCode.A)) moveInput = -1f;
         if (Input.GetKey(KeyCode.D)) moveInput = 1f;
 
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
-        // --- Salto con espacio ---
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        // --- Salto y doble salto ---
+        if (Input.GetKeyDown(KeyCode.Space) && jumpCount < maxJumps)
         {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f); // reinicia la velocidad vertical para consistencia
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            jumpCount++;
         }
 
         // --- Flip del sprite ---
-        if (moveInput > 0 && !facingRight)
+        if (moveInput > 0 && !facingRight) Flip();
+        else if (moveInput < 0 && facingRight) Flip();
+
+        // --- Dash ---
+        if (Input.GetKeyDown(KeyCode.F) && canDash)
         {
-            Flip();
-        }
-        else if (moveInput < 0 && facingRight)
-        {
-            Flip();
+            StartCoroutine(DoDash());
         }
 
-        //Animacion
+        // --- Animaciones ---
         float speed = Mathf.Abs(moveInput);
-        animator.SetFloat("Speed", speed); // correr o idle
-
-        animator.SetBool("isJumping", !isGrounded); // saltando o en el suelo
+        animator.SetFloat("Speed", speed);
+        animator.SetBool("isJumping", !isGrounded);
         animator.SetBool("isGrounded", isGrounded);
-
-
+        animator.SetBool("isDashing", isDashing);
     }
 
-    // Dibuja el área de detección en el editor
     void Flip()
     {
         facingRight = !facingRight;
@@ -60,13 +74,13 @@ public class PlayerMovement : MonoBehaviour
         escala.x *= -1;
         transform.localScale = escala;
     }
-        
-    // Detectar si toca el suelo
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("ground"))
         {
             isGrounded = true;
+            jumpCount = 0; // Reinicia los saltos al tocar el suelo
         }
     }
 
@@ -77,7 +91,25 @@ public class PlayerMovement : MonoBehaviour
             isGrounded = false;
         }
     }
-    
 
-    
+    private System.Collections.IEnumerator DoDash()
+    {
+        canDash = false;
+        isDashing = true;
+
+        float originalGravity = rb.gravityScale;
+        rb.gravityScale = 0f;
+        rb.linearVelocity = Vector2.zero;
+
+        float dashDirection = facingRight ? 1f : -1f;
+        rb.linearVelocity = new Vector2(dashDirection * dashSpeed, 0f);
+
+        yield return new WaitForSeconds(dashDuration);
+
+        rb.gravityScale = originalGravity;
+        isDashing = false;
+
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
+    }
 }
