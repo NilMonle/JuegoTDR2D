@@ -76,22 +76,6 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("isDashing", isDashing);
     }
 
-    public void impacto(Vector2 direccion, int vidamenos)
-    {
-        if (!impacto)
-        {
-            impacto = true;
-            Vector2 rebote = new Vector2(transform.position.x - direccion.x, 1).normalized;
-            rb.AddForce(rebote, ForceMode2D.Impulse);
-        }
-    }
-
-    public void noimpacto()
-    {
-        impacto = false
-    }
-
-
     void Flip()
     {
         facingRight = !facingRight;
