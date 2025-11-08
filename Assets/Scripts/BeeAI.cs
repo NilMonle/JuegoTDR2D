@@ -5,7 +5,8 @@ using UnityEngine;
 public class BeeAI : MonoBehaviour
 {
     [Header("Referencias")]
-    public Transform player;                 
+    public Transform player;
+    Vida playerVida;                 
     Rigidbody2D rb;
     Animator anim;
     SpriteRenderer sr;
@@ -42,6 +43,9 @@ public class BeeAI : MonoBehaviour
             var p = GameObject.FindGameObjectWithTag("Player");
             if (p != null) player = p.transform;
         }
+
+        if (player != null)
+            playerVida = player.GetComponent<Vida>();
 
         ChooseNewPatrolPoint();
     }
@@ -116,10 +120,10 @@ public class BeeAI : MonoBehaviour
         Collider2D hit = Physics2D.OverlapCircle(transform.position, contactDamageRadius,
             LayerMask.GetMask("Default", "Player")); 
 
-        if (hit != null && hit.transform == player)
+        if (hit != null)
         {
-            var vida = player.GetComponent<Vida>();
-            if (vida != null)
+            var vida = GetVidaFromCollider(hit);
+            if (vida != null && vida == playerVida)
             {
                 nextAttackTime = Time.time + attackCooldown;
                 vida.RecibirDanio(damage);
@@ -139,13 +143,32 @@ public class BeeAI : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D other)
     {
-        if (other.transform != player || Time.time < nextAttackTime) return;
-        var vida = player.GetComponent<Vida>();
-        if (vida != null)
+        if (Time.time < nextAttackTime) return;
+
+        var vida = GetVidaFromCollider(other);
+        if (vida != null && vida == playerVida)
         {
             vida.RecibirDanio(damage);
             nextAttackTime = Time.time + attackCooldown;
         }
-            
+
+    }
+
+    Vida GetVidaFromCollider(Collider2D col)
+    {
+        if (col == null) return null;
+
+        var vida = col.GetComponentInParent<Vida>();
+
+        if (vida == null && col.attachedRigidbody != null)
+            vida = col.attachedRigidbody.GetComponent<Vida>();
+
+        if (vida == null && player != null && col.transform == player)
+            vida = player.GetComponent<Vida>();
+
+        if (playerVida == null && vida != null && vida.transform == player)
+            playerVida = vida;
+
+        return vida;
     }
 }
