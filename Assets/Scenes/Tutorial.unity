@@ -1169,7 +1169,7 @@ Transform:
   m_GameObject: {fileID: 542016980}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 104.93587, y: 58.065998, z: -5}
+  m_LocalPosition: {x: 105.127815, y: 58.065998, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2099,7 +2099,7 @@ Transform:
   m_GameObject: {fileID: 959357418}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 198.9, y: 58.8, z: 0}
+  m_LocalPosition: {x: 118.6, y: 57.5, z: 0}
   m_LocalScale: {x: 2.8455, y: 2.8455, z: 2.8455}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3007,7 +3007,7 @@ Transform:
   m_GameObject: {fileID: 1264761533}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 104.93587, y: 58.065998, z: -5}
+  m_LocalPosition: {x: 105.127815, y: 58.065998, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -51384,6 +51384,37 @@ Transform:
   - {fileID: 112114811}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1594652416
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1594652417}
+  m_Layer: 3
+  m_Name: ControladorAtaque
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1594652417
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1594652416}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1830299766}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1619687568
 GameObject:
   m_ObjectHideFlags: 0
@@ -51524,6 +51555,7 @@ GameObject:
   - component: {fileID: 1830299767}
   - component: {fileID: 1830299768}
   - component: {fileID: 1830299769}
+  - component: {fileID: 1830299770}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -51698,6 +51730,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1227612065}
+  - {fileID: 1594652417}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1830299767
@@ -51776,6 +51809,18 @@ MonoBehaviour:
   respawnPoint: {fileID: 680888117}
   delayRespawn: 1.5
   deathEffect: {fileID: 0}
+--- !u!114 &1830299770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830299761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5333c7687af2026448e2241c9a64db0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
