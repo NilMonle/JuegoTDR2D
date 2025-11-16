@@ -25,6 +25,12 @@ public class PlayerMovement : MonoBehaviour
     [Header("Animación")]
     private Animator animator;
 
+    [Header("Reacciones")]
+    public float knockbackDuration = 0.2f;
+    public float knockbackDamp = 12f;
+    private Vector2 knockbackVelocity = Vector2.zero;
+    private float knockbackTimer = 0f;
+
     // --- ADD: Wall fix variables ---
     [Header("Wall Fix Settings")]
     public LayerMask wallMask;
@@ -39,6 +45,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        UpdateKnockbackState();
+
         if (isDashing) return;
 
         // --- Movimiento horizontal ---
@@ -46,7 +54,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.A)) moveInput = -1f;
         if (Input.GetKey(KeyCode.D)) moveInput = 1f;
 
-        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
+        ApplyHorizontalMovement(moveInput);
 
         // --- Salto y doble salto ---
         if (Input.GetKeyDown(KeyCode.Space) && jumpCount < maxJumps)
@@ -77,6 +85,34 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("isJumping", !isGrounded);
         animator.SetBool("isGrounded", isGrounded);
         animator.SetBool("isDashing", isDashing);
+    }
+
+    void ApplyHorizontalMovement(float moveInput)
+    {
+        Vector2 velocity = rb.linearVelocity;
+        velocity.x = moveInput * moveSpeed;
+        velocity += knockbackVelocity;
+        rb.linearVelocity = velocity;
+    }
+
+    void UpdateKnockbackState()
+    {
+        if (knockbackTimer > 0f)
+        {
+            knockbackTimer -= Time.deltaTime;
+        }
+        else if (knockbackVelocity != Vector2.zero)
+        {
+            knockbackVelocity = Vector2.MoveTowards(knockbackVelocity, Vector2.zero, knockbackDamp * Time.deltaTime);
+            if (knockbackVelocity.sqrMagnitude < 0.0001f)
+                knockbackVelocity = Vector2.zero;
+        }
+    }
+
+    public void ApplyKnockback(Vector2 velocity)
+    {
+        knockbackVelocity = velocity;
+        knockbackTimer = knockbackDuration;
     }
 
     void Flip()
