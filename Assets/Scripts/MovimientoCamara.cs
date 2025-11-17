@@ -1,38 +1,35 @@
 using UnityEngine;
-using Cinemachine;
 
-public class CameraDownCinemachine : MonoBehaviour
+public class MovimientoCamara : MonoBehaviour
 {
-    public CinemachineVirtualCamera vCam;
-    public float downOffset = 2f;
-    public float smoothSpeed = 5f;
+    public Transform player;       // Referencia al jugador
+    public Vector3 offset;         // Offset normal de la cámara
+    public float downOffset = 2f;  // Cuánto baja la cámara al presionar S
+    public float smoothSpeed = 5f; // Velocidad de movimiento suave
 
-    private CinemachineFramingTransposer transposer;
-    private float defaultY;
+    private Vector3 targetOffset;
 
     void Start()
     {
-        transposer = vCam.GetCinemachineComponent<CinemachineFramingTransposer>();
-        if (transposer != null)
-        {
-            defaultY = transposer.m_TrackedObjectOffset.y;
-        }
+        targetOffset = offset;
     }
 
-    void Update()
+    void LateUpdate()
     {
-        if (transposer == null) return;
-
-        float targetY = defaultY;
-
+        // Detectar si se presiona la tecla S
         if (Input.GetKey(KeyCode.S))
         {
-            targetY = defaultY - downOffset;
+            targetOffset = offset + Vector3.down * downOffset;
+        }
+        else
+        {
+            targetOffset = offset;
         }
 
+        // Calcular la posición deseada
+        Vector3 desiredPosition = player.position + targetOffset;
+
         // Movimiento suave
-        Vector3 offset = transposer.m_TrackedObjectOffset;
-        offset.y = Mathf.Lerp(offset.y, targetY, smoothSpeed * Time.deltaTime);
-        transposer.m_TrackedObjectOffset = offset;
+        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
     }
 }
