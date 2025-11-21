@@ -28,6 +28,11 @@ public class BossController : MonoBehaviour
     public float radioContacto = 0.7f;
     public LayerMask capasDanio = ~0;
 
+    [Header("Ataque: Espada")]
+    public Transform puntoGolpeEspada;
+    public float radioGolpeEspada = 0.8f;
+    public int danoEspada = 1;
+
     [Header("Ataque: Dash")]
     public float tiempoTelegraphDash = 0.35f;
     public float duracionDash = 0.45f;
@@ -196,19 +201,30 @@ public class BossController : MonoBehaviour
         proyectil.Lanzar(direccion.normalized, velocidadProyectil, danoProyectil, capasDanio);
     }
 
+    public void GolpeEspadaAnimEvent()
+    {
+        Vector2 centro = puntoGolpeEspada != null ? (Vector2)puntoGolpeEspada.position : rb.position;
+        IntentarDaniarJugador(danoEspada, radioGolpeEspada, centro);
+    }
+
     void IntentarDaniarJugador(int danio, float radio)
     {
+        IntentarDaniarJugador(danio, radio, rb.position);
+    }
+
+    void IntentarDaniarJugador(int danio, float radio, Vector2 centro)
+    {    
         if (Time.timeScale == 0f) return;
 
-        Collider2D hit = Physics2D.OverlapCircle(rb.position, radio, capasDanio);
+        Collider2D hit = Physics2D.OverlapCircle(centro, radio, capasDanio);
         if (hit == null) return;
 
         var vida = ObtenerVida(hit);
         if (vida != null && vida == playerVida)
         {
             Vector2 knockDir = player != null
-                ? ((Vector2)player.position - rb.position).normalized
-                : ((Vector2)hit.transform.position - rb.position).normalized;
+                ? ((Vector2)player.position - centro).normalized
+                : ((Vector2)hit.transform.position - centro).normalized;
 
             if (knockDir == Vector2.zero)
                 knockDir = Vector2.up;
@@ -252,5 +268,11 @@ public class BossController : MonoBehaviour
 
         Gizmos.color = new Color(1f, 0.5f, 0f);
         Gizmos.DrawWireSphere(transform.position, radioGolpeSalto);
+
+        if (puntoGolpeEspada != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(puntoGolpeEspada.position, radioGolpeEspada);
+        }
     }
 }
