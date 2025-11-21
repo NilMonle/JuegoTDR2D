@@ -50794,7 +50794,7 @@ MonoBehaviour:
   walkSpeed: 1.5
   runSpeed: 5
   patrolDistance: 10
-  detectionRadius: 10
+  detectionRadius: 13
   lineOfSightMask:
     serializedVersion: 2
     m_Bits: 0
