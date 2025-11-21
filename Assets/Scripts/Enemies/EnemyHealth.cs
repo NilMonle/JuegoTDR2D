@@ -7,6 +7,11 @@ public class EnemyHealth : MonoBehaviour
 
     public Rigidbody2D rb; // Rigidbody del enemigo
     public float knockbackForce = 5f;
+    public float knockbackDuration = 0.2f;
+
+    float knockbackEndTime = -1f;
+
+    public bool IsRecoiling => Time.time < knockbackEndTime;
 
     void Awake()
     {
@@ -31,6 +36,7 @@ public class EnemyHealth : MonoBehaviour
         {
             rb.linearVelocity = Vector2.zero; // resetear velocidad antes del golpe
             rb.AddForce(knockbackDir.normalized * knockbackForce, ForceMode2D.Impulse);
+            knockbackEndTime = Time.time + knockbackDuration;
         }
     }
 }

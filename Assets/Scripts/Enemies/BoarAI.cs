@@ -12,6 +12,7 @@ public class BoarAI : MonoBehaviour
     Rigidbody2D rb;
     Animator anim;
     SpriteRenderer sr;
+    EnemyHealth health;
 
     [Header("Movimiento")]
     public float walkSpeed = 1.5f;    // Velocidad patrulla (Walk)
@@ -42,6 +43,7 @@ public class BoarAI : MonoBehaviour
         rb   = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sr   = GetComponent<SpriteRenderer>();
+        health = GetComponent<EnemyHealth>();
 
         startPos = rb.position;
 
@@ -58,6 +60,13 @@ public class BoarAI : MonoBehaviour
     void FixedUpdate()
     {
         float speedAbs = 0f;
+
+        if (health != null && health.IsRecoiling)
+        {
+            // mientras está retrocediendo por knockback, no mover
+            UpdateAnimator(Mathf.Abs(rb.linearVelocity.x));
+            return;
+        }
 
         if (player == null)
         {
@@ -154,7 +163,8 @@ public class BoarAI : MonoBehaviour
             if (vida != null && vida == playerVida)
             {
                 nextAttackTime = Time.time + attackCooldown;
-                vida.RecibirDanio(damage);
+                Vector2 knockbackDir = ((Vector2)player.position - rb.position).normalized;
+                vida.RecibirDanio(damage, knockbackDir, knockbackForceToPlayer);
             }
         }
     }
@@ -168,7 +178,8 @@ public class BoarAI : MonoBehaviour
         if (vida != null && vida == playerVida)
         {
             nextAttackTime = Time.time + attackCooldown;
-            vida.RecibirDanio(damage);
+            Vector2 knockbackDir = ((Vector2)player.position - rb.position).normalized;
+            vida.RecibirDanio(damage, knockbackDir, knockbackForceToPlayer);
         }
     }
 

@@ -50267,6 +50267,7 @@ MonoBehaviour:
   vidaMax: 3
   vidaActual: 3
   tiempoInvulnerable: 0.5
+  knockbackForce: 6
   onVidaCambia:
     m_PersistentCalls:
       m_Calls:
@@ -50984,7 +50985,8 @@ MonoBehaviour:
   vidaMax: 3
   vidaActual: 0
   rb: {fileID: 1776784464}
-  knockbackForce: 200
+  knockbackForce: 10
+  knockbackDuration: 0.2
 --- !u!114 &1776784469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51002,6 +51004,7 @@ MonoBehaviour:
   targetLayers:
     serializedVersion: 2
     m_Bits: 8
+  knockbackForceToPlayer: 6
 --- !u!1 &1815785436
 GameObject:
   m_ObjectHideFlags: 0

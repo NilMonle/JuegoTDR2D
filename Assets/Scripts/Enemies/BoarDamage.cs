@@ -8,6 +8,7 @@ public class BoarDamage : MonoBehaviour
     public int damage = 1;
     public float attackCooldown = 0.8f;
     public LayerMask targetLayers;
+    public float knockbackForceToPlayer = 6f;
 
     float nextAllowedDamageTime;
 
@@ -34,7 +35,8 @@ public class BoarDamage : MonoBehaviour
         if (vida == null)
             return;
 
-        vida.RecibirDanio(damage);
+        Vector2 knockbackDir = (other.transform.position - transform.position).normalized;
+        vida.RecibirDanio(damage, knockbackDir, knockbackForceToPlayer);
         nextAllowedDamageTime = Time.time + attackCooldown;
     }
 

@@ -10,6 +10,10 @@ public class Vida : MonoBehaviour
     [Header("Invulnerabilidad opcional tras daño")]
     public float tiempoInvulnerable = 0.4f;
 
+    [Header("Knockback")]
+    [Tooltip("Fuerza de empuje aplicada al jugador al recibir daño.")]
+    public float knockbackForce = 6f;
+
     [Header("Eventos")]
     // (vidaActual, vidaMax)
     public UnityEvent<int, int> onVidaCambia;
@@ -27,33 +31,46 @@ public class Vida : MonoBehaviour
     }
 
     // Método original: sin fuente, igual que antes
-public void RecibirDanio(int cantidad)
-{
-    if (EstaMuerto || invulnerable || cantidad <= 0) return;
+    public void RecibirDanio(int cantidad) => RecibirDanio(cantidad, Vector2.zero, 0f, false);
 
-    vidaActual = Mathf.Max(vidaActual - cantidad, 0);
-    onDanio?.Invoke(cantidad);
-    NotificarVida();
-
-    if (vidaActual <= 0)
+    public void RecibirDanio(int cantidad, Collider2D fuente)
     {
-        EstaMuerto = true;
-        onMuerte?.Invoke();
-    }
-    else if (tiempoInvulnerable > 0f)
-    {
-        if (!gameObject.activeInHierarchy) return;
-        StopAllCoroutines();
-        StartCoroutine(InvulnerablePor(tiempoInvulnerable));
-    }
-}
+        if (fuente == null || !fuente.CompareTag("Enemy")) return;
 
-// Nueva versión filtrando por tag
-public void RecibirDanio(int cantidad, Collider2D fuente)
-{
-    if (fuente == null || !fuente.CompareTag("Enemy")) return;
-    RecibirDanio(cantidad);
-}
+        Vector2 knockbackDir = (transform.position - fuente.transform.position).normalized;
+        RecibirDanio(cantidad, knockbackDir, knockbackForce);
+    }
+    public void RecibirDanio(int cantidad, Vector2 knockbackDir, float fuerzaKnockback)
+    {
+        RecibirDanio(cantidad, knockbackDir, fuerzaKnockback, true);
+    }
+
+    // Nueva versión filtrando por tag
+    bool RecibirDanio(int cantidad, Vector2 knockbackDir, float fuerzaKnockback, bool aplicarKnockback)
+    {
+        if (EstaMuerto || invulnerable || cantidad <= 0) return false;
+
+        vidaActual = Mathf.Max(vidaActual - cantidad, 0);
+        onDanio?.Invoke(cantidad);
+        NotificarVida();
+
+        if (vidaActual <= 0)
+        {
+            EstaMuerto = true;
+            onMuerte?.Invoke();
+        }
+        else if (tiempoInvulnerable > 0f)
+        {
+            if (!gameObject.activeInHierarchy) return false;
+            StopAllCoroutines();
+            StartCoroutine(InvulnerablePor(tiempoInvulnerable));
+        }
+
+        if (aplicarKnockback)
+            AplicarKnockback(knockbackDir, fuerzaKnockback);
+
+        return true;
+    }
 
 
     public void Curar(int cantidad)
@@ -81,5 +98,18 @@ public void RecibirDanio(int cantidad, Collider2D fuente)
         invulnerable = true;
         yield return new WaitForSeconds(t);
         invulnerable = false;
+    }
+
+    void AplicarKnockback(Vector2 knockbackDir, float fuerza)
+    {
+        if (fuerza <= 0f) return;
+
+        var movement = GetComponent<PlayerMovement>();
+        if (movement == null) return;
+
+        if (knockbackDir == Vector2.zero)
+            knockbackDir = Vector2.right * (movement.facingRight ? -1f : 1f);
+
+        movement.ApplyKnockback(knockbackDir.normalized, fuerza);
     }
 }
