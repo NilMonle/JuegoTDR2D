@@ -11,6 +11,7 @@ public class BossController : MonoBehaviour
     Animator anim;
     SpriteRenderer sr;
     EnemyHealth health;
+    Vida playerVida;
 
     [Header("Fases")]
     [Range(0.1f, 0.9f)] public float porcentajeFase2 = 0.5f;
@@ -21,6 +22,10 @@ public class BossController : MonoBehaviour
     [Header("Ritmo de combate")]
     public float tiempoEntrePatrones = 1.25f;
     public float distanciaMaximaPersecucion = 12f;
+
+    [Header("Knockback")]
+    public float knockbackFuerza = 6f;
+    public float knockbackProyectil = 6f;
 
     [Header("Daño por contacto")]
     public int danoContacto = 1;
@@ -56,17 +61,24 @@ public class BossController : MonoBehaviour
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
-        sr = GetComponent<SpriteRenderer>();
-        health = GetComponent<EnemyHealth>();
+    rb = GetComponent<Rigidbody2D>();
+    anim = GetComponent<Animator>();
+    sr = GetComponent<SpriteRenderer>();
+    health = GetComponent<EnemyHealth>();
 
-        if (player == null)
-        {
-            var p = GameObject.FindGameObjectWithTag("Player");
-            if (p != null) player = p.transform;
-        }
+    // 1) Si no hay player asignado en el inspector, lo buscamos por tag
+    if (player == null)
+    {
+        var p = GameObject.FindGameObjectWithTag("Player");
+        if (p != null) player = p.transform;
     }
+
+    // 2) Si hemos encontrado player, guardamos su Vida
+    if (player != null)
+    {
+        playerVida = player.GetComponent<Vida>();
+    }
+}
 
     void Start()
     {
@@ -195,7 +207,7 @@ public class BossController : MonoBehaviour
     void LanzarProyectil(Vector2 origen, Vector2 direccion)
     {
         var proyectil = Instantiate(proyectilPrefab, origen, Quaternion.identity);
-        proyectil.Lanzar(direccion.normalized, velocidadProyectil, danoProyectil, capasDanio);
+        proyectil.Lanzar(direccion.normalized, velocidadProyectil, danoProyectil, knockbackProyectil, capasDanio);
     }
 
     // Evento desde la animación Attack
@@ -217,17 +229,18 @@ public class BossController : MonoBehaviour
             if (hit == null) continue;
 
             var vida = ObtenerVida(hit);
-            if (vida == null) continue;
+            if (vida != null && vida == playerVida)
+            {
+                Vector2 knockDir = player != null
+                    ? ((Vector2)player.position - centro).normalized
+                    : ((Vector2)hit.transform.position - centro).normalized;
 
-            Vector2 knockDir = player != null
-                ? ((Vector2)player.position - centro).normalized
-                : ((Vector2)hit.transform.position - centro).normalized;
+                if (knockDir == Vector2.zero)
+                    knockDir = Vector2.up;
 
-            if (knockDir == Vector2.zero)
-                knockDir = Vector2.up;
-
-            vida.RecibirDanio(danio, knockDir, vida.knockbackForce);
-            break; // golpeamos solo a uno
+                vida.RecibirDanio(danio, knockDir, knockbackFuerza);
+                break;
+            }
         }
     }
 
@@ -251,6 +264,27 @@ public class BossController : MonoBehaviour
             enFase2 = true;
             if (anim) anim.SetTrigger("Phase2");
         }
+    }
+
+    public void Morir()
+    {
+        // Lanzar animación de muerte
+        if (anim != null)
+            anim.SetTrigger("Death");   // Debes tener un Trigger "Death" en el Animator
+
+        // Detener IA del boss
+        StopAllCoroutines();
+        this.enabled = false;
+
+        // Opcional: parar movimiento físico
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.bodyType = RigidbodyType2D.Kinematic;
+        }
+
+        // Opcional: destruir al cabo de un rato (por ejemplo 3 segundos)
+        Destroy(gameObject, 3f);
     }
 
     void OnDrawGizmosSelected()

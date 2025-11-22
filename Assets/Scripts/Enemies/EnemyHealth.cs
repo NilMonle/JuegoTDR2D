@@ -16,6 +16,7 @@ public class EnemyHealth : MonoBehaviour
     void Awake()
     {
         vidaActual = vidaMax;
+
         if (rb == null)
             rb = GetComponent<Rigidbody2D>();
     }
@@ -28,7 +29,22 @@ public class EnemyHealth : MonoBehaviour
         // Revisar muerte
         if (vidaActual <= 0)
         {
-            Destroy(gameObject); // o cualquier lógica de muerte
+            // 1) Miramos si este enemigo es un BOSS
+            BossController boss = GetComponent<BossController>();
+
+            if (boss != null)
+            {
+                // Si es boss, dejamos que el BossController gestione la animación de muerte
+                boss.Morir();
+            }
+            else
+            {
+                // Si NO es boss, simplemente destruimos el objeto
+                Destroy(gameObject);
+            }
+
+            // Importante: salimos para no aplicar knockback a un muerto
+            return;
         }
 
         // Aplicar knockback

@@ -254,7 +254,7 @@ Transform:
   m_GameObject: {fileID: 106778783}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.46, y: 1.06, z: 0}
+  m_LocalPosition: {x: 0.32, y: 0.64, z: 0}
   m_LocalScale: {x: 1.0283, y: 1.0283, z: 1.0283}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2502,7 +2502,7 @@ Transform:
   m_GameObject: {fileID: 533244188}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 247.5, y: 66.44, z: 0}
+  m_LocalPosition: {x: 254.83, y: 66.85, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -74759,23 +74759,25 @@ MonoBehaviour:
   player: {fileID: 1613036818}
   porcentajeFase2: 0.9
   multiplicadorFase2: 1.25
-  tiempoEntrePatrones: 1.25
-  distanciaMaximaPersecucion: 20
+  tiempoEntrePatrones: 0.75
+  distanciaMaximaPersecucion: 25
+  knockbackFuerza: 20
+  knockbackProyectil: 20
   danoContacto: 1
   radioContacto: 0.7
   capasDanio:
     serializedVersion: 2
     m_Bits: 8
   puntoGolpeEspada: {fileID: 106778784}
-  radioGolpeEspada: 2.5
+  radioGolpeEspada: 3
   danoEspada: 1
   tiempoTelegraphDash: 0.35
   duracionDash: 0.45
-  velocidadDash: 9
-  duracionSalto: 0.9
+  velocidadDash: 7
+  duracionSalto: 0.7
   alturaSalto: 2.5
   radioGolpeSalto: 1.2
-  danoSalto: 1
+  danoSalto: 0
   proyectilPrefab: {fileID: 7955832366147309609, guid: b9739547e5bcddc4ab2ab58748b4dfcb, type: 3}
   puntoDisparo: {fileID: 488005913}
   proyectilesPorRafaga: 5
@@ -74795,7 +74797,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e53ad2421d382954c8b156ebc4783523, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vidaMax: 10
+  vidaMax: 1
   vidaActual: 0
   rb: {fileID: 2124013704}
   knockbackForce: 5

@@ -8,6 +8,7 @@ public class BossProjectile : MonoBehaviour
 
     Rigidbody2D rb;
     int damage;
+    float knockbackForce;
     float speed;
     float spawnTime;
     LayerMask damageLayers;
@@ -19,10 +20,11 @@ public class BossProjectile : MonoBehaviour
         spawnTime = Time.time;
     }
 
-    public void Lanzar(Vector2 direction, float baseSpeed, int dano, LayerMask capasDanio)
+    public void Lanzar(Vector2 direction, float baseSpeed, int dano, float knockback, LayerMask capasDanio)
     {
         speed = Mathf.Max(0.5f, baseSpeed);
         damage = Mathf.Max(1, dano);
+        knockbackForce = Mathf.Max(0f, knockback);
         damageLayers = capasDanio;
 
         rb.linearVelocity = direction.normalized * speed;
@@ -52,7 +54,7 @@ public class BossProjectile : MonoBehaviour
             if (knockDir == Vector2.zero)
                 knockDir = Vector2.up;
 
-            vida.RecibirDanio(damage, knockDir, vida.knockbackForce);
+            vida.RecibirDanio(damage, knockDir, knockbackForce > 0f ? knockbackForce : vida.knockbackForce);
         }
 
         Destroy(gameObject);
