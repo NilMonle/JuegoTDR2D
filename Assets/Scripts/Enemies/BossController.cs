@@ -11,7 +11,6 @@ public class BossController : MonoBehaviour
     Animator anim;
     SpriteRenderer sr;
     EnemyHealth health;
-    Vida playerVida;
 
     [Header("Fases")]
     [Range(0.1f, 0.9f)] public float porcentajeFase2 = 0.5f;
@@ -67,9 +66,6 @@ public class BossController : MonoBehaviour
             var p = GameObject.FindGameObjectWithTag("Player");
             if (p != null) player = p.transform;
         }
-
-        if (player != null)
-            playerVida = player.GetComponent<Vida>();
     }
 
     void Start()
@@ -87,7 +83,7 @@ public class BossController : MonoBehaviour
 
     IEnumerator BossLoop()
     {
-        yield return new WaitForSeconds(0.5f); // pequeño respiro al iniciar
+        yield return new WaitForSeconds(0.5f); // respiro al iniciar
 
         while (health == null || health.vidaActual > 0)
         {
@@ -137,12 +133,13 @@ public class BossController : MonoBehaviour
         Vector2 direccion = (objetivo - rb.position).normalized;
         if (direccion == Vector2.zero)
             direccion = Vector2.right;
+
         float fin = Time.time + duracionDash;
 
         while (Time.time < fin)
         {
             rb.MovePosition(rb.position + direccion * velocidadDash * Time.fixedDeltaTime);
-            IntentarDaniarJugador(danoContacto, radioContacto);
+            IntentarDaniarJugador(danoContacto, radioContacto, rb.position);
             yield return new WaitForFixedUpdate();
         }
 
@@ -166,7 +163,7 @@ public class BossController : MonoBehaviour
             yield return null;
         }
 
-        IntentarDaniarJugador(danoSalto, radioGolpeSalto);
+        IntentarDaniarJugador(danoSalto, radioGolpeSalto, rb.position);
     }
 
     IEnumerator PatronProyectiles()
@@ -201,27 +198,27 @@ public class BossController : MonoBehaviour
         proyectil.Lanzar(direccion.normalized, velocidadProyectil, danoProyectil, capasDanio);
     }
 
+    // Evento desde la animación Attack
     public void GolpeEspadaAnimEvent()
     {
         Vector2 centro = puntoGolpeEspada != null ? (Vector2)puntoGolpeEspada.position : rb.position;
         IntentarDaniarJugador(danoEspada, radioGolpeEspada, centro);
     }
 
-    void IntentarDaniarJugador(int danio, float radio)
-    {
-        IntentarDaniarJugador(danio, radio, rb.position);
-    }
-
     void IntentarDaniarJugador(int danio, float radio, Vector2 centro)
-    {    
+    {
         if (Time.timeScale == 0f) return;
 
-        Collider2D hit = Physics2D.OverlapCircle(centro, radio, capasDanio);
-        if (hit == null) return;
+        Collider2D[] hits = Physics2D.OverlapCircleAll(centro, radio, capasDanio);
+        if (hits == null || hits.Length == 0) return;
 
-        var vida = ObtenerVida(hit);
-        if (vida != null && vida == playerVida)
+        foreach (var hit in hits)
         {
+            if (hit == null) continue;
+
+            var vida = ObtenerVida(hit);
+            if (vida == null) continue;
+
             Vector2 knockDir = player != null
                 ? ((Vector2)player.position - centro).normalized
                 : ((Vector2)hit.transform.position - centro).normalized;
@@ -230,6 +227,7 @@ public class BossController : MonoBehaviour
                 knockDir = Vector2.up;
 
             vida.RecibirDanio(danio, knockDir, vida.knockbackForce);
+            break; // golpeamos solo a uno
         }
     }
 
@@ -240,12 +238,6 @@ public class BossController : MonoBehaviour
         var vida = col.GetComponentInParent<Vida>();
         if (vida == null && col.attachedRigidbody != null)
             vida = col.attachedRigidbody.GetComponent<Vida>();
-
-        if (vida == null && player != null && col.transform == player)
-            vida = player.GetComponent<Vida>();
-
-        if (vida != null && vida.transform == player && playerVida == null)
-            playerVida = vida;
 
         return vida;
     }

@@ -46,7 +46,14 @@ public class BossProjectile : MonoBehaviour
 
         var vida = ObtenerVida(other);
         if (vida != null)
-            vida.RecibirDanio(damage, other);
+        
+        {
+            Vector2 knockDir = ((Vector2)other.transform.position - (Vector2)transform.position).normalized;
+            if (knockDir == Vector2.zero)
+                knockDir = Vector2.up;
+
+            vida.RecibirDanio(damage, knockDir, vida.knockbackForce);
+        }
 
         Destroy(gameObject);
     }

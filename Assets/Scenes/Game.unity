@@ -238,9 +238,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 106778784}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: GolpeEspada
-  m_TagString: Enemy
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -254,7 +254,7 @@ Transform:
   m_GameObject: {fileID: 106778783}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.209, y: 0.098, z: 0}
+  m_LocalPosition: {x: 0.46, y: 1.06, z: 0}
   m_LocalScale: {x: 1.0283, y: 1.0283, z: 1.0283}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2209,7 +2209,7 @@ Transform:
   m_GameObject: {fileID: 488005912}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.033, y: 0.171, z: 0}
+  m_LocalPosition: {x: -0, y: 1.11, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -74757,17 +74757,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1613036818}
-  porcentajeFase2: 0.5
-  multiplicadorFase2: 0.75
+  porcentajeFase2: 0.9
+  multiplicadorFase2: 1.25
   tiempoEntrePatrones: 1.25
-  distanciaMaximaPersecucion: 12
+  distanciaMaximaPersecucion: 20
   danoContacto: 1
   radioContacto: 0.7
   capasDanio:
     serializedVersion: 2
     m_Bits: 8
   puntoGolpeEspada: {fileID: 106778784}
-  radioGolpeEspada: 2
+  radioGolpeEspada: 2.5
   danoEspada: 1
   tiempoTelegraphDash: 0.35
   duracionDash: 0.45
@@ -74775,7 +74775,7 @@ MonoBehaviour:
   duracionSalto: 0.9
   alturaSalto: 2.5
   radioGolpeSalto: 1.2
-  danoSalto: 2
+  danoSalto: 1
   proyectilPrefab: {fileID: 7955832366147309609, guid: b9739547e5bcddc4ab2ab58748b4dfcb, type: 3}
   puntoDisparo: {fileID: 488005913}
   proyectilesPorRafaga: 5
@@ -74795,7 +74795,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e53ad2421d382954c8b156ebc4783523, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vidaMax: 5
+  vidaMax: 10
   vidaActual: 0
   rb: {fileID: 2124013704}
   knockbackForce: 5
@@ -74871,7 +74871,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 4723107735738678597, guid: 0bd97e23f8b532a4f8969605a3b00a4e, type: 3}
+  m_Sprite: {fileID: 21300002, guid: ae297123f091bbf4e8f1835eb98fb293, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -74891,8 +74891,8 @@ Transform:
   m_GameObject: {fileID: 2124013700}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 221.36, y: 67.11, z: 0}
-  m_LocalScale: {x: 9.316867, y: 9.316867, z: 9.316867}
+  m_LocalPosition: {x: 219.21, y: 64.89, z: 0}
+  m_LocalScale: {x: 3.7829275, y: 3.7829275, z: 3.7829275}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 488005913}
@@ -74909,7 +74909,7 @@ Animator:
   m_GameObject: {fileID: 2124013700}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 4f6fccd708afd8446b750eec3e30188d, type: 2}
+  m_Controller: {fileID: 9100000, guid: 3c2a5b7097b0fe44394328c0bdb9252e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -74955,17 +74955,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.004637271, y: 0.055659823}
+  m_Offset: {x: -0.06487143, y: 0.7413909}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2, y: 2}
+    pivot: {x: 0.5, y: 0}
+    oldSize: {x: 3.125, y: 1.71875}
     newSize: {x: 0.23, y: 0.39}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.31165588, y: 0.525019}
+  m_Size: {x: 0.93251824, y: 1.247814}
   m_EdgeRadius: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
