@@ -108,7 +108,7 @@ AnimatorStateMachine:
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 50, y: 20, z: 0}
-  m_EntryPosition: {x: 50, y: 120, z: 0}
+  m_EntryPosition: {x: 30, y: 160, z: 0}
   m_ExitPosition: {x: 960, y: 150, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: -990753145818387492}
@@ -175,7 +175,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: attack
-  m_Speed: 3.4
+  m_Speed: 3
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 940732113112427342}
