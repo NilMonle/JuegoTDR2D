@@ -72,6 +72,8 @@ public class PlayerMovement : MonoBehaviour
 
             if (!infiniteJump)
                 jumpCount++;
+
+            Debug.Log("Esta saltando");
         }
 
 
@@ -104,7 +106,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("ground"))
+        if (collision.gameObject.CompareTag("ground") && IsGroundCollision(collision))
         {
             isGrounded = true;
             jumpCount = 0; // Reinicia los saltos al tocar el suelo
@@ -128,6 +130,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
+        if (collision.gameObject.CompareTag("ground") && IsGroundCollision(collision))
+        {
+            isGrounded = true;
+        }
+        else if (collision.gameObject.CompareTag("ground"))
+        {
+            isGrounded = false;
+        }
+        
         if (IsCeilingCollision(collision))
         {
             isTouchingCeiling = true;
@@ -174,6 +185,19 @@ public class PlayerMovement : MonoBehaviour
         foreach (ContactPoint2D contact in collision.contacts)
         {
             if (contact.normal.y < -0.5f)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsGroundCollision(Collision2D collision)
+    {
+        foreach (ContactPoint2D contact in collision.contacts)
+        {
+            if (contact.normal.y > 0.5f)
             {
                 return true;
             }
